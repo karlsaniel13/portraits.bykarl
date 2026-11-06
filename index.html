@@ -11,7 +11,7 @@
         (function() {
             const savedTheme = localStorage.getItem("site_theme");
             if (savedTheme === "dark") {
-                document.documentElement.setAttribute("data-theme-pre", "true");
+                document.documentElement.setAttribute("data-theme", "dark");
             }
         })();
     </script>
@@ -388,11 +388,13 @@
             display: flex;
             align-items: center;
             padding: 120px 7%;
-            background:
+            background-color: #1c1411; /* Dark fallback if image fails to load */
+            background-image: 
                 var(--hero-overlay),
                 url("portrait-background.jpg");
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
 
         .hero {
@@ -658,7 +660,7 @@
         </div>
     </aside>
 
-    <section id="index">
+    <section id="home">
         <div class="hero">
             <small>Hand-drawn graphite portraits</small>
 
@@ -832,31 +834,31 @@
             }
         }
 
-        // Apply saved theme on page load
+        // Apply saved theme on page load targeting documentElement (<html>)
         const savedTheme = localStorage.getItem("site_theme");
         if (savedTheme === "dark") {
-            document.body.setAttribute("data-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
             updateThemeButton(true);
         } else {
-            document.body.removeAttribute("data-theme");
+            document.documentElement.removeAttribute("data-theme");
             updateThemeButton(false);
         }
 
         themeToggleBtn.addEventListener("click", () => {
-            const isDark = document.body.getAttribute("data-theme") === "dark";
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
-                document.body.removeAttribute("data-theme");
+                document.documentElement.removeAttribute("data-theme");
                 localStorage.setItem("site_theme", "light");
                 updateThemeButton(false);
             } else {
-                document.body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
                 localStorage.setItem("site_theme", "dark");
                 updateThemeButton(true);
             }
         });
     </script>
 
-    <!-- Accounts + footer comments (site.js must be in the same folder as this page) -->
+    <!-- Accounts + footer comments -->
     <script src="site.js"></script>
 
     <noscript>
