@@ -1,40 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | portraits.bykarl</title>
+    <title>Log In | portraits.bykarl</title>
 
     <!-- Inline script to apply theme instantly before rendering to prevent white/dark flash -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem("site_theme");
             if (savedTheme === "dark") {
-                document.documentElement.setAttribute("data-theme-pre", "true");
+                document.documentElement.setAttribute("data-theme", "dark");
             }
         })();
     </script>
 
     <style>
         :root {
-            --img-base: min(25vw, 360px);
-            --small-img: calc(var(--img-base) * 0.9);
-            --large-img: calc(var(--img-base) * 1.35);
-
             --bg-body: #efe4d2;
             --text-body: #1c1411;
+            --text-muted: #6e5a4b;
+            --error: #9b3a2a;
             --nav-scrolled: #1c1411f2;
             --nav-border: #efe4d230;
             --nav-border-scrolled: #6f4e37;
             --hero-overlay: linear-gradient(90deg, #120c09ea 20%, #120c099c 65%, #120c0955);
-            --about-bg: #4a3426;
-            --about-text: #d8c9b2;
-            --about-title: #efe4d2;
             --card-bg: #f7efe1;
             --card-border: #dccbb0;
-            --card-hover-bg: #fbf5e9;
-            --card-hover-border: #c4ac8a;
-            --card-text-muted: #6e5a4b;
             --footer-bg: #1c1411;
             --footer-text: #efe4d2;
             --footer-subtext: #bfae98;
@@ -45,24 +38,19 @@
             --drawer-bg: #1c1411;
             --drawer-text: #efe4d2;
             --drawer-border: #4a3426;
-            --modal-bg: rgba(18, 12, 9, 0.85);
         }
 
         [data-theme="dark"] {
             --bg-body: #120d0b;
             --text-body: #e3d7c4;
+            --text-muted: #bfae98;
+            --error: #e59a86;
             --nav-scrolled: #0c0807f2;
             --nav-border: #4a342650;
             --nav-border-scrolled: #c8a47e;
             --hero-overlay: linear-gradient(90deg, #0a0705f5 20%, #0a0705b8 65%, #0a070577);
-            --about-bg: #1c1411;
-            --about-text: #bfae98;
-            --about-title: #e3d7c4;
             --card-bg: #1a120e;
             --card-border: #38271d;
-            --card-hover-bg: #241914;
-            --card-hover-border: #6f4e37;
-            --card-text-muted: #bfae98;
             --footer-bg: #090605;
             --footer-text: #e3d7c4;
             --footer-subtext: #8e7b68;
@@ -73,17 +61,12 @@
             --drawer-bg: #120d0b;
             --drawer-text: #e3d7c4;
             --drawer-border: #38271d;
-            --modal-bg: rgba(5, 3, 2, 0.92);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
         }
 
         body {
@@ -148,6 +131,11 @@
             100% { transform: translateX(250%); }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .loader { transition: none; }
+            .loader-bar::after { animation: none; width: 100%; }
+        }
+
         /* NAVIGATION */
         nav {
             position: fixed;
@@ -184,6 +172,12 @@
             gap: 30px;
         }
 
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
         .nav-links a {
             color: #e3d7c4;
             text-decoration: none;
@@ -191,8 +185,7 @@
             transition: color 0.3s;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
+        .nav-links a:hover {
             color: #c8a47e;
         }
 
@@ -229,7 +222,7 @@
             background-color: #c8a47e;
         }
 
-        /* SETTINGS OVERLAY & DRAWER (Connected to Right Side) */
+        /* SETTINGS OVERLAY & DRAWER */
         .drawer-overlay {
             position: fixed;
             inset: 0;
@@ -321,7 +314,6 @@
             transform: scale(0.98);
         }
 
-        /* Light Mode uses dark button styling */
         .theme-toggle-btn.btn-dark-style {
             background: #1c1411;
             color: #efe4d2;
@@ -332,7 +324,6 @@
             color: #c8a47e;
         }
 
-        /* Dark Mode uses light button styling */
         .theme-toggle-btn.btn-light-style {
             background: #efe4d2;
             color: #1c1411;
@@ -388,7 +379,101 @@
             border-color: var(--btn-hover-bg);
         }
 
-        /* BUTTON */
+        /* LOG IN FORM */
+        .auth-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 130px 7% 80px;
+            background:
+                var(--hero-overlay),
+                url("bg3.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* 50% transparent box */
+        .auth-card {
+            width: min(440px, 100%);
+            padding: 40px;
+            background: rgba(247, 239, 225, 0.5);
+            background: color-mix(in srgb, var(--card-bg) 50%, transparent);
+            border: 1px solid var(--card-border);
+            border-top: 2px solid #6f4e37;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .auth-card small {
+            color: var(--btn-bg);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .auth-card h1 {
+            margin: 12px 0 8px;
+            font-family: Georgia, serif;
+            font-size: 40px;
+            font-weight: normal;
+            line-height: 1.1;
+            color: var(--text-body);
+        }
+
+        .auth-intro {
+            margin-bottom: 28px;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 13px 14px;
+            background: var(--bg-body);
+            border: 1px solid var(--card-border);
+            color: var(--text-body);
+            font-family: inherit;
+            font-size: 15px;
+            transition: border-color 0.3s, background-color 0.4s ease;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--btn-bg);
+        }
+
+        .show-pass {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .form-message {
+            min-height: 20px;
+            margin: 4px 0 14px;
+            color: var(--error);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         .button {
             display: inline-block;
             padding: 14px 24px;
@@ -397,7 +482,7 @@
             text-decoration: none;
             font-size: 13px;
             font-weight: bold;
-            transition: background 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .button:hover {
@@ -405,474 +490,32 @@
             color: var(--btn-hover-text);
         }
 
-        /* HERO / PRICES */
-        .hero {
-            min-height: 75vh;
-            padding: 135px 7% 75px;
-            background:
-                var(--hero-overlay),
-                url("portrait-background.jpg");
-            background-size: cover;
-            background-position: center;
-            transition: background 0.4s ease;
-        }
-
-        .hero-text {
-            color: #efe4d2;
-        }
-
-        .hero-text small {
-            color: #c8a47e;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        .hero-text h1 {
-            margin: 20px 0;
-            font-family: Georgia, serif;
-            font-size: clamp(38.4px, 4.8vw, 64px);
-            font-weight: normal;
-            line-height: 1.05;
-            text-align: left;
-        }
-
-        .hero-text h1 span {
-            color: #c8a47e;
-        }
-
-        /* PRICE ROWS */
-        .price-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            align-items: center;
-            gap: 50px;
-            margin-top: 50px;
-            color: #efe4d2;
-        }
-
-        .price-row.reverse {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .hero-text,
-        .price-row {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .price-info {
-            max-width: 560px;
-            justify-self: center;
-        }
-
-        .hero > .price-row:not(.reverse) .price-info {
-            text-align: right;
-            justify-self: end;
-        }
-
-        .hero > .price-row:not(.reverse) .price-image {
-            justify-self: start;
-        }
-
-        .hero > .price-row.reverse .price-image {
-            justify-self: end;
-        }
-
-        .hero > .price-row.reverse .price-info {
-            justify-self: start;
-            text-align: left;
-        }
-
-        .hero > .price-row:not(.reverse) .price-list li {
-            padding-left: 0;
-            padding-right: 22px;
-        }
-
-        .hero > .price-row:not(.reverse) .price-list li::before {
-            left: auto;
-            right: 0;
-        }
-
-        .price-info h2 {
-            margin-bottom: 8px;
-            font-family: Georgia, serif;
-            font-size: clamp(30px, 3.5vw, 42px);
-            font-weight: normal;
-            line-height: 1.1;
-            color: #c8a47e;
-        }
-
-        .price-size {
-            font-size: 18px;
-            color: #efe4d2;
-        }
-
-        .price-orientation {
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #bfae98;
-        }
-
-        .price-list {
-            list-style: none;
-            margin: 18px 0;
-        }
-
-        .price-list li {
-            position: relative;
-            padding-left: 22px;
-            font-size: 15px;
-            line-height: 1.9;
-            color: #e3d7c4;
-        }
-
-        .price-list li::before {
-            content: "\2014";
-            position: absolute;
-            left: 0;
-            color: #c8a47e;
-        }
-
-        .price-additionals h3 {
-            margin: 24px 0 8px;
-            font-size: 13px;
-            font-weight: normal;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #c8a47e;
-        }
-
-        .price-additionals p {
-            font-size: 15px;
-            line-height: 1.9;
-            color: #e3d7c4;
-        }
-
-        .price-image {
-            justify-self: center;
-        }
-
-        .price-image img {
-            display: block;
-            position: relative;
-            width: var(--small-img);
-            max-width: 100%;
-            height: auto;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-        }
-
-        .price-row.reverse .price-image img {
-            width: var(--large-img);
-        }
-
-        /* SECTION HEADINGS */
-        .section-heading {
-            max-width: 650px;
-            margin: 0 auto 50px;
-            text-align: center;
-        }
-
-        .section-heading small {
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        .section-heading h2 {
-            margin: 15px 0;
-            font-family: Georgia, serif;
-            font-size: clamp(36px, 4.5vw, 50px);
-            font-weight: normal;
-            line-height: 1.1;
-        }
-
-        .section-heading p {
-            font-size: 15px;
-            line-height: 1.8;
-        }
-
-        /* HOW TO ORDER */
-        .order-section {
-            padding: 80px 7% 100px;
-            background: var(--bg-body);
-            transition: background-color 0.4s ease;
-        }
-
-        .order-section .section-heading small {
-            color: #6f4e37;
-        }
-
-        .order-section .section-heading h2 {
-            color: var(--text-body);
-        }
-
-        .order-layout {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 1150px;
-            margin: 0 auto;
-        }
-
-        .order-card {
-            padding: 40px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-top: 2px solid #6f4e37;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .order-card:hover {
-            background: var(--card-hover-bg);
-            border-color: var(--card-hover-border);
-            border-top-color: #6f4e37;
-        }
-
-        .order-card h3 {
-            margin-bottom: 20px;
-            font-family: Georgia, serif;
-            font-size: 22px;
-            font-weight: normal;
-            line-height: 1.3;
-            color: var(--text-body);
-        }
-
-        .order-card h3.caps {
-            font-size: 20px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .reminder-list {
-            list-style: none;
-        }
-
-        .reminder-list li {
-            position: relative;
-            margin-bottom: 16px;
-            padding-left: 22px;
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--card-text-muted);
-        }
-
-        .reminder-list li::before {
-            content: "\2022";
-            position: absolute;
-            left: 0;
-            color: #6f4e37;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        .order-details {
-            list-style: none;
-            margin: 0 0 28px;
-        }
-
-        .order-details li {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--card-border);
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-body);
-        }
-
-        /* INLINE SOCIALS INSIDE HOW TO ORDER */
-        .order-socials-inline {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            max-width: 1150px;
-            margin: 50px auto 0;
-        }
-
-        .social-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .social-item img {
-            display: block;
+        .auth-submit {
             width: 100%;
-            max-width: 580px;
-            height: 380px;
-            object-fit: contain;
+            border: none;
+            font-family: inherit;
             cursor: pointer;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
         }
 
-        .social-item .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        .auth-submit:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .auth-switch {
+            margin-top: 22px;
+            color: var(--text-muted);
+            font-size: 14px;
             text-align: center;
-            min-width: 160px;
         }
 
-        .social-item .button svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-            transition: fill 0.3s;
+        .auth-switch a {
+            color: var(--text-body);
+            text-decoration: underline;
         }
 
-        /* LIGHTBOX MODAL */
-        .image-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--modal-bg);
-            backdrop-filter: blur(5px);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .image-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .image-modal img {
-            max-width: 75vw;
-            max-height: 75vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-            border: 2px solid #c8a47e;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .image-modal.active img {
-            transform: scale(1);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 25px;
-            right: 35px;
-            color: #efe4d2;
-            font-size: 36px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-            transition: color 0.2s ease;
-        }
-
-        .modal-close:hover {
-            color: #c8a47e;
-        }
-
-        /* GALLERY */
-        .gallery-section {
-            padding: 100px 7%;
-            background: var(--about-bg);
-            transition: background-color 0.4s ease;
-        }
-
-        .gallery-section .section-heading small {
-            color: #c8a47e;
-        }
-
-        .gallery-section .section-heading h2 {
-            color: var(--about-title);
-        }
-
-        .gallery-section .section-heading p {
-            color: var(--about-text);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .portrait-card {
-            position: relative;
-            overflow: hidden;
-            background: var(--about-bg);
-            height: 400px;
-            cursor: pointer;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-        }
-
-        .portrait-card img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: transform 0.4s ease;
-        }
-
-        .portrait-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(28, 20, 17, 0.88);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 25px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.35s ease, visibility 0.35s ease;
-            border: 2px solid #6f4e37;
-        }
-
-        .portrait-overlay h3 {
-            font-family: Georgia, serif;
-            font-size: 24px;
-            color: #efe4d2;
-            margin-bottom: 8px;
-        }
-
-        .portrait-overlay p {
-            font-size: 13px;
-            color: #c8a47e;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        @media (hover: hover) {
-            .price-image img:hover {
-                transform: scale(1.06);
-                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-                z-index: 5;
-            }
-
-            .social-item img:hover {
-                transform: scale(1.08) translateY(-6px);
-                box-shadow: 0 22px 45px rgba(0, 0, 0, 0.3);
-                z-index: 5;
-            }
-
-            .portrait-card:hover {
-                transform: scale(1.04);
-                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
-                z-index: 5;
-            }
-
-            .portrait-card:hover img {
-                transform: scale(1.06);
-            }
-
-            .portrait-card:hover .portrait-overlay {
-                opacity: 1;
-                visibility: visible;
-            }
+        .auth-switch a:hover {
+            color: var(--btn-bg);
         }
 
         /* FOOTER */
@@ -908,22 +551,15 @@
         }
 
         .social a {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             padding: 10px 15px;
             color: #e3d7c4;
             border: 1px solid #4a3a30;
             text-decoration: none;
             font-size: 13px;
-            transition: background 0.3s, border-color 0.3s, color 0.3s;
-        }
-
-        .social a svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-            transition: fill 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .social a:hover {
@@ -939,95 +575,55 @@
             font-size: 11px;
         }
 
-        /* TABLET */
-        @media (max-width: 900px) {
-            :root {
-                --img-base: min(65vw, 340px);
-            }
-
-            .hero {
-                padding: 140px 6% 80px;
-            }
-
-            .price-row,
-            .price-row.reverse {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .price-image,
-            .price-row.reverse .price-image,
-            .price-row .price-info {
-                justify-self: center;
-            }
-
-            .hero > .price-row:not(.reverse) .price-info,
-            .hero > .price-row:not(.reverse) .price-image,
-            .hero > .price-row.reverse .price-info,
-            .hero > .price-row.reverse .price-image {
-                justify-self: center;
-            }
-
-            .order-layout,
-            .order-socials-inline {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* MOBILE */
+        /* MOBILE: nav becomes two rows (logo + settings on top, links below) */
         @media (max-width: 700px) {
             nav {
-                padding: 22px 6%;
-                flex-direction: column;
-                gap: 15px;
+                flex-wrap: wrap;
+                row-gap: 12px;
+                padding: 16px 6% 12px;
             }
 
             nav.scrolled {
-                padding: 14px 6%;
-                gap: 10px;
+                padding: 12px 6% 10px;
             }
 
+            .logo {
+                order: 1;
+                font-size: 19px;
+            }
+
+            /* Let the menu and settings button sit directly in the nav row layout */
             .nav-links {
-                gap: 18px;
-                flex-wrap: wrap;
-                justify-content: center;
+                display: contents;
             }
 
-            .hero {
-                min-height: auto;
-                padding: 150px 6% 80px;
+            .settings-btn {
+                order: 2;
             }
 
-            .hero-text h1 {
-                font-size: 40px;
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 10px;
+                border-top: 1px solid var(--nav-border);
             }
 
-            .order-section {
-                padding: 60px 6% 80px;
+            .nav-links a {
+                font-size: 13px;
             }
 
-            .order-card {
+            .auth-section {
+                padding: 170px 6% 60px;
+            }
+
+            .auth-card {
                 padding: 28px;
             }
 
-            .social-item img {
-                height: 280px;
-            }
-
-            .gallery-section {
-                padding: 80px 6%;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-
-            footer {
-                padding: 45px 6% 25px;
+            .auth-card h1 {
+                font-size: 34px;
             }
 
             .footer-top {
@@ -1041,31 +637,27 @@
     </style>
 </head>
 
-<body class="loading">
+<body class="loading" data-no-comments>
 
-    <!-- LOADING SCREEN -->
+    <!-- loading screen -->
     <div class="loader" id="loader" aria-hidden="true">
         <div class="loader-name">portraits<span>.bykarl</span></div>
         <div class="loader-bar"></div>
     </div>
 
-    <!-- LIGHTBOX MODAL FOR FULL IMAGE VIEW -->
-    <div class="image-modal" id="imageModal" aria-hidden="true">
-        <span class="modal-close" id="modalClose">&times;</span>
-        <img id="modalImage" src="" alt="Enlarged view">
-    </div>
-
-    <!-- NAVIGATION -->
+    <!-- Navigation -->
     <nav id="navbar">
         <a href="index.html" class="logo">portraits.bykarl</a>
 
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="products.html" class="active">Products</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html">Contact Us</a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html">Contact Us</a>
+            </div>
 
-            <!-- 3-BAR SETTINGS BUTTON -->
+            <!-- 3-bar settings button -->
             <button class="settings-btn" id="openDrawerBtn" aria-label="Open Settings">
                 <span></span>
                 <span></span>
@@ -1074,7 +666,7 @@
         </div>
     </nav>
 
-    <!-- OVERLAY & SETTINGS DRAWER -->
+    <!-- Overlay & Settings Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
 
     <aside class="settings-drawer" id="settingsDrawer" aria-label="Settings Panel">
@@ -1097,218 +689,41 @@
         </div>
     </aside>
 
-    <main>
-        <section class="hero">
-            <div class="hero-text">
-                <h1>
-                    <span>PRICES</span>
-                </h1>
-            </div>
+    <section class="auth-section">
+        <div class="auth-card">
+            <small>Welcome back</small>
+            <h1>Log In</h1>
+            <p class="auth-intro">Log in to your account to leave comments on the website.</p>
 
-            <div class="price-row">
-                <div class="price-info">
-                    <h2>Small Portrait - 450 Php</h2>
-                    <p class="price-size">Size: 13 cm x 18 cm</p>
-                    <p class="price-orientation">(Landscape or Portrait)</p>
-
-                    <ul class="price-list">
-                        <li>Shipping fee included</li>
-                        <li>Picture frame with stand</li>
-                        <li>Blank background</li>
-                    </ul>
-
-                    <div class="price-additionals">
-                        <h3>Additionals:</h3>
-                        <p>150 Php per head</p>
-                        <p>100 Php with added background</p>
-                    </div>
+            <form id="loginForm" novalidate>
+                <div class="field">
+                    <label for="loginUser">Username or email</label>
+                    <input type="text" id="loginUser" autocomplete="username" required>
                 </div>
 
-                <div class="price-image">
-                    <img src="small.jpg" alt="Small graphite portrait" loading="lazy">
-                </div>
-            </div>
-
-            <div class="price-row reverse">
-                <div class="price-image">
-                    <img src="large.jpg" alt="Large graphite portrait" loading="lazy">
+                <div class="field">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" required>
                 </div>
 
-                <div class="price-info">
-                    <h2>Large Portrait - 750 Php</h2>
-                    <p class="price-size">Size: 21 cm x 29.7 cm (A4 size)</p>
-                    <p class="price-orientation">(Landscape or Portrait)</p>
+                <label class="show-pass">
+                    <input type="checkbox" id="showPassword"> Show password
+                </label>
 
-                    <ul class="price-list">
-                        <li>Shipping fee included</li>
-                        <li>Picture frame with art hanger (no stand)</li>
-                        <li>Blank background</li>
-                    </ul>
+                <div class="form-message" id="formMessage" role="alert"></div>
 
-                    <div class="price-additionals">
-                        <h3>Additionals:</h3>
-                        <p>150 Php per head</p>
-                        <p>150 Php with added background</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+                <button type="submit" class="button auth-submit" id="submitBtn">Log In</button>
+            </form>
 
-        <section class="order-section" id="how-to-order">
-            <div class="section-heading">
-                <small>Simple and Personal</small>
-                <h2>How to Order a Portrait</h2>
-            </div>
-
-            <div class="order-layout">
-
-                <!-- LEFT SIDE: DIRECT MESSAGE -->
-                <article class="order-card">
-                    <h3>Direct message us on this account and fill up these details:</h3>
-
-                    <ul class="order-details">
-                        <li>Name:</li>
-                        <li>
-                            Size of the Portrait: (Small or Large) and the orientation
-                            (Landscape or Portrait)
-                        </li>
-                        <li>Photo of the Portrait that I would be doing:</li>
-                        <li>Place where the Portrait is going to be shipped:</li>
-                        <li>Additionals:</li>
-                    </ul>
-                </article>
-
-                <!-- RIGHT SIDE: IMPORTANT REMINDERS -->
-                <article class="order-card">
-                    <h3 class="caps">Important Reminders:</h3>
-
-                    <ul class="reminder-list">
-                        <li>GCash payments are only acceptable.</li>
-                        <li>
-                            A down payment costing half of the actual price should be paid first
-                            to ensure the order. Send the screenshot of your payment to officially
-                            start the portrait.
-                        </li>
-                        <li>After the down payment, no refunds are allowed.</li>
-                        <li>
-                            The portrait would be finished in a matter of 2-3 days depending on
-                            the difficulty of the portrait. To ensure the portrait would arrive
-                            on time, I would suggest you order it a week or two before the actual
-                            date.
-                        </li>
-                        <li>
-                            2 orders of portraits are only accepted every week to ensure the
-                            portraits are going to be done on time with quality.
-                        </li>
-                    </ul>
-                </article>
-
-            </div>
-
-            <!-- INLINE SOCIAL MEDIA IMAGES AND BUTTONS -->
-            <div class="order-socials-inline">
-                <div class="social-item">
-                    <img src="instagram.jpg" alt="portraits.bykarl Instagram account" class="clickable-image" loading="lazy">
-                    <a href="https://www.instagram.com/portraits.bykarl/" target="_blank"
-                        rel="noopener noreferrer" class="button">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                        <span>Instagram</span>
-                    </a>
-                </div>
-
-                <div class="social-item">
-                    <img src="tiktok.jpg" alt="portraits.bykarl TikTok account" class="clickable-image" loading="lazy">
-                    <a href="https://www.tiktok.com/@portraitsbykarl" target="_blank"
-                        rel="noopener noreferrer" class="button">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-1.26V9.2a6.33 6.33 0 0 0-1 .08 6.34 6.34 0 1 0 6.34 6.34V9.28a8.16 8.16 0 0 0 4.77 1.52V7.34a4.85 4.85 0 0 1-1-.65z"/>
-                        </svg>
-                        <span>TikTok</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="gallery-section" id="portraits">
-            <div class="section-heading">
-                <small>Selected Works</small>
-                <h2>Our Portraits</h2>
-                <p>
-                    A collection of hand-drawn graphite artworks, each created
-                    to capture the beauty and character of its subject.
-                </p>
-            </div>
-
-            <div class="gallery-grid">
-                <article class="portrait-card">
-                    <img src="portrait1.jpg" alt="Graphite portrait artwork 1" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Large Portrait</h3>
-                        <p>Size: 21 cm x 29.7 cm (A4 size)</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-
-                <article class="portrait-card">
-                    <img src="portrait2.jpg" alt="Graphite portrait artwork 2" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Small Portrait</h3>
-                        <p>Size: 13 cm x 18 cm</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-
-                <article class="portrait-card">
-                    <img src="portrait3.jpg" alt="Graphite portrait artwork 3" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Small Portrait</h3>
-                        <p>Size: 13 cm x 18 cm</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-
-                <article class="portrait-card">
-                    <img src="portrait4.jpg" alt="Graphite portrait artwork 4" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Small Portrait</h3>
-                        <p>Size: 13 cm x 18 cm</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-
-                <article class="portrait-card">
-                    <img src="portrait5.jpg" alt="Graphite portrait artwork 5" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Small Portrait</h3>
-                        <p>Size: 13 cm x 18 cm</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-
-                <article class="portrait-card">
-                    <img src="portrait6.jpg" alt="Graphite portrait artwork 6" loading="lazy">
-                    <div class="portrait-overlay">
-                        <h3>Large Portrait</h3>
-                        <p>Size: 21 cm x 29.7 cm (A4 size)</p>
-                        <p>Portrait</p>
-                        <p>No Additionals</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-    </main>
+            <p class="auth-switch">Don't have an account? <a href="signup.html">Sign up</a></p>
+        </div>
+    </section>
 
     <footer>
         <div class="footer-top">
             <div>
                 <div class="footer-name">portraits.bykarl</div>
+
                 <p>
                     Hand-drawn portraits made with patience,
                     detail, and meaning.
@@ -1317,16 +732,12 @@
 
             <div class="social">
                 <a href="https://www.instagram.com/portraits.bykarl/" target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     Instagram
                 </a>
 
                 <a href="https://www.tiktok.com/@portraitsbykarl" target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-1.26V9.2a6.33 6.33 0 0 0-1 .08 6.34 6.34 0 1 0 6.34 6.34V9.28a8.16 8.16 0 0 0 4.77 1.52V7.34a4.85 4.85 0 0 1-1-.65z"/>
-                    </svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
                     TikTok
                 </a>
             </div>
@@ -1374,35 +785,6 @@
 
         setTimeout(hideLoader, 5000);
 
-        /* LIGHTBOX MODAL FUNCTIONALITY */
-        const imageModal = document.getElementById("imageModal");
-        const modalImage = document.getElementById("modalImage");
-        const modalClose = document.getElementById("modalClose");
-        const clickableImages = document.querySelectorAll(".clickable-image");
-
-        clickableImages.forEach(img => {
-            img.addEventListener("click", () => {
-                modalImage.src = img.src;
-                modalImage.alt = img.alt;
-                imageModal.classList.add("active");
-                imageModal.setAttribute("aria-hidden", "false");
-            });
-        });
-
-        function closeModal() {
-            imageModal.classList.remove("active");
-            imageModal.setAttribute("aria-hidden", "true");
-        }
-
-        modalClose.addEventListener("click", closeModal);
-        imageModal.addEventListener("click", (e) => {
-            if (e.target === imageModal) closeModal();
-        });
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") closeModal();
-        });
-
         /* SETTINGS DRAWER CONTROLS */
         const openDrawerBtn = document.getElementById("openDrawerBtn");
         const closeDrawerBtn = document.getElementById("closeDrawerBtn");
@@ -1438,31 +820,74 @@
             }
         }
 
-        // Apply saved theme on page load
+        // Apply saved theme on page load targeting documentElement (<html>)
         const savedTheme = localStorage.getItem("site_theme");
         if (savedTheme === "dark") {
-            document.body.setAttribute("data-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
             updateThemeButton(true);
         } else {
-            document.body.removeAttribute("data-theme");
+            document.documentElement.removeAttribute("data-theme");
             updateThemeButton(false);
         }
 
         themeToggleBtn.addEventListener("click", () => {
-            const isDark = document.body.getAttribute("data-theme") === "dark";
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
-                document.body.removeAttribute("data-theme");
+                document.documentElement.removeAttribute("data-theme");
                 localStorage.setItem("site_theme", "light");
                 updateThemeButton(false);
             } else {
-                document.body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
                 localStorage.setItem("site_theme", "dark");
                 updateThemeButton(true);
             }
         });
     </script>
 
-    <!-- Accounts + footer comments (site.js must be in the same folder as this page) -->
     <script src="site.js"></script>
+
+    <script>
+        /* LOG IN FORM */
+        PB.redirectIfLoggedIn();
+
+        const loginForm = document.getElementById("loginForm");
+        const loginUser = document.getElementById("loginUser");
+        const loginPassword = document.getElementById("loginPassword");
+        const showPassword = document.getElementById("showPassword");
+        const formMessage = document.getElementById("formMessage");
+        const submitBtn = document.getElementById("submitBtn");
+
+        showPassword.addEventListener("change", function () {
+            loginPassword.type = showPassword.checked ? "text" : "password";
+        });
+
+        loginForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            formMessage.textContent = "";
+            submitBtn.disabled = true;
+
+            // NOTE: adjust PB.login to match the login function in your site.js
+            PB.login(
+                loginUser.value,
+                loginPassword.value
+            ).then(function (result) {
+                if (result.ok) {
+                    PB.goBack();
+                } else {
+                    formMessage.textContent = result.error;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+
+    <noscript>
+        <style>
+            .loader { display: none; }
+            body.loading { overflow: auto; }
+        </style>
+    </noscript>
+
 </body>
+
 </html>
