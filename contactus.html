@@ -11,7 +11,7 @@
         (function() {
             const savedTheme = localStorage.getItem("site_theme");
             if (savedTheme === "dark") {
-                document.documentElement.setAttribute("data-theme-pre", "true");
+                document.documentElement.setAttribute("data-theme", "dark");
             }
         })();
     </script>
@@ -186,6 +186,12 @@
         }
 
         .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 30px;
@@ -604,26 +610,47 @@
             }
         }
 
+        /* MOBILE: nav becomes two rows (logo + settings on top, links below) */
         @media (max-width: 700px) {
             nav {
-                padding: 22px 6%;
-                flex-direction: column;
-                gap: 15px;
+                flex-wrap: wrap;
+                row-gap: 12px;
+                padding: 16px 6% 12px;
             }
 
             nav.scrolled {
-                padding: 14px 6%;
-                gap: 10px;
+                padding: 12px 6% 10px;
             }
 
+            .logo {
+                order: 1;
+                font-size: 19px;
+            }
+
+            /* Let the menu and settings button sit directly in the nav row layout */
             .nav-links {
-                gap: 18px;
-                flex-wrap: wrap;
-                justify-content: center;
+                display: contents;
+            }
+
+            .settings-btn {
+                order: 2;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 10px;
+                border-top: 1px solid var(--nav-border);
+            }
+
+            .nav-links a {
+                font-size: 13px;
             }
 
             .contacts-section {
-                padding: 190px 6% 80px;
+                padding: 170px 6% 80px;
             }
 
             .contact-group {
@@ -662,10 +689,12 @@
         <a href="index.html" class="logo">portraits.bykarl</a>
 
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="products.html">Products</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html" class="active">Contact Us</a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html" class="active">Contact Us</a>
+            </div>
 
             <!-- 3-BAR SETTINGS BUTTON -->
             <button class="settings-btn" id="openDrawerBtn" aria-label="Open Settings">
@@ -958,24 +987,24 @@
             }
         }
 
-        // Apply saved theme on page load
+        // Apply saved theme on page load targeting documentElement (<html>)
         const savedTheme = localStorage.getItem("site_theme");
         if (savedTheme === "dark") {
-            document.body.setAttribute("data-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
             updateThemeButton(true);
         } else {
-            document.body.removeAttribute("data-theme");
+            document.documentElement.removeAttribute("data-theme");
             updateThemeButton(false);
         }
 
         themeToggleBtn.addEventListener("click", () => {
-            const isDark = document.body.getAttribute("data-theme") === "dark";
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
-                document.body.removeAttribute("data-theme");
+                document.documentElement.removeAttribute("data-theme");
                 localStorage.setItem("site_theme", "light");
                 updateThemeButton(false);
             } else {
-                document.body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
                 localStorage.setItem("site_theme", "dark");
                 updateThemeButton(true);
             }
