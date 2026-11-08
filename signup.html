@@ -11,7 +11,7 @@
         (function() {
             const savedTheme = localStorage.getItem("site_theme");
             if (savedTheme === "dark") {
-                document.documentElement.setAttribute("data-theme-pre", "true");
+                document.documentElement.setAttribute("data-theme", "dark");
             }
         })();
     </script>
@@ -167,6 +167,12 @@
         }
 
         .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 30px;
@@ -382,15 +388,17 @@
             padding: 130px 7% 80px;
             background:
                 var(--hero-overlay),
-                url("portrait-background.jpg");
+                url("bg3.jpg");
             background-size: cover;
             background-position: center;
         }
 
+        /* 50% transparent box */
         .auth-card {
             width: min(440px, 100%);
             padding: 40px;
-            background: var(--card-bg);
+            background: rgba(247, 239, 225, 0.5);
+            background: color-mix(in srgb, var(--card-bg) 50%, transparent);
             border: 1px solid var(--card-border);
             border-top: 2px solid #6f4e37;
             transition: background-color 0.4s ease, border-color 0.4s ease;
@@ -574,17 +582,39 @@
             font-size: 11px;
         }
 
+        /* MOBILE: nav becomes two rows (logo + settings on top, links below) */
         @media (max-width: 700px) {
             nav {
-                padding: 22px 6%;
+                flex-wrap: wrap;
+                row-gap: 12px;
+                padding: 16px 6% 12px;
             }
 
             nav.scrolled {
-                padding: 14px 6%;
+                padding: 12px 6% 10px;
             }
 
+            .logo {
+                order: 1;
+                font-size: 19px;
+            }
+
+            /* Let the menu and settings button sit directly in the nav row layout */
             .nav-links {
-                gap: 14px;
+                display: contents;
+            }
+
+            .settings-btn {
+                order: 2;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 10px;
+                border-top: 1px solid var(--nav-border);
             }
 
             .nav-links a {
@@ -592,7 +622,7 @@
             }
 
             .auth-section {
-                padding: 130px 6% 60px;
+                padding: 170px 6% 60px;
             }
 
             .auth-card {
@@ -627,10 +657,12 @@
         <a href="index.html" class="logo">portraits.bykarl</a>
 
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="products.html">Products</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html">Contact Us</a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html">Contact Us</a>
+            </div>
 
             <!-- 3-bar settings button -->
             <button class="settings-btn" id="openDrawerBtn" aria-label="Open Settings">
@@ -807,24 +839,24 @@
             }
         }
 
-        // Apply saved theme on page load
+        // Apply saved theme on page load targeting documentElement (<html>)
         const savedTheme = localStorage.getItem("site_theme");
         if (savedTheme === "dark") {
-            document.body.setAttribute("data-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
             updateThemeButton(true);
         } else {
-            document.body.removeAttribute("data-theme");
+            document.documentElement.removeAttribute("data-theme");
             updateThemeButton(false);
         }
 
         themeToggleBtn.addEventListener("click", () => {
-            const isDark = document.body.getAttribute("data-theme") === "dark";
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
-                document.body.removeAttribute("data-theme");
+                document.documentElement.removeAttribute("data-theme");
                 localStorage.setItem("site_theme", "light");
                 updateThemeButton(false);
             } else {
-                document.body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
                 localStorage.setItem("site_theme", "dark");
                 updateThemeButton(true);
             }
