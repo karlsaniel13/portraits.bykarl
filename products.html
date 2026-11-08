@@ -10,7 +10,7 @@
         (function() {
             const savedTheme = localStorage.getItem("site_theme");
             if (savedTheme === "dark") {
-                document.documentElement.setAttribute("data-theme-pre", "true");
+                document.documentElement.setAttribute("data-theme", "dark");
             }
         })();
     </script>
@@ -148,6 +148,11 @@
             100% { transform: translateX(250%); }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .loader { transition: none; }
+            .loader-bar::after { animation: none; width: 100%; }
+        }
+
         /* NAVIGATION */
         nav {
             position: fixed;
@@ -179,6 +184,12 @@
         }
 
         .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 30px;
@@ -407,14 +418,33 @@
 
         /* HERO / PRICES */
         .hero {
+            position: relative;
             min-height: 75vh;
-            padding: 135px 7% 75px;
+            padding: 135px 7% 170px;
             background:
                 var(--hero-overlay),
-                url("portrait-background.jpg");
+                url("bg.jpg");
             background-size: cover;
             background-position: center;
             transition: background 0.4s ease;
+        }
+
+        /* Fade the cover photo into the next section */
+        .hero::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 180px;
+            background: linear-gradient(to bottom, transparent, var(--bg-body));
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
         }
 
         .hero-text {
@@ -550,7 +580,28 @@
         }
 
         .price-image {
+            position: relative;
             justify-self: center;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .example-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            text-align: center;
+            font-family: Georgia, serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
         }
 
         .price-image img {
@@ -774,9 +825,24 @@
 
         /* GALLERY */
         .gallery-section {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
             padding: 100px 7%;
-            background: var(--about-bg);
+            background: var(--about-bg) url("bg3.jpg") center / cover no-repeat;
             transition: background-color 0.4s ease;
+        }
+
+        /* Fade on top (blends into the section above) + dark tint for readability */
+        .gallery-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(to bottom, var(--bg-body) 0%, transparent 260px),
+                rgba(18, 12, 9, 0.6);
         }
 
         .gallery-section .section-heading small {
@@ -802,7 +868,7 @@
         .portrait-card {
             position: relative;
             overflow: hidden;
-            background: var(--about-bg);
+            background: transparent;
             height: 400px;
             cursor: pointer;
             transition: transform 0.35s ease, box-shadow 0.35s ease;
@@ -847,10 +913,15 @@
         }
 
         @media (hover: hover) {
-            .price-image img:hover {
+            .price-image:hover {
                 transform: scale(1.06);
                 box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
                 z-index: 5;
+            }
+
+            .price-image:hover .example-badge {
+                opacity: 1;
+                visibility: visible;
             }
 
             .social-item img:hover {
@@ -870,6 +941,13 @@
             }
 
             .portrait-card:hover .portrait-overlay {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        @media (hover: none) {
+            .example-badge {
                 opacity: 1;
                 visibility: visible;
             }
@@ -946,7 +1024,7 @@
             }
 
             .hero {
-                padding: 140px 6% 80px;
+                padding: 140px 6% 160px;
             }
 
             .price-row,
@@ -978,28 +1056,48 @@
             }
         }
 
-        /* MOBILE */
+        /* MOBILE: nav becomes two rows (logo + settings on top, links below) */
         @media (max-width: 700px) {
             nav {
-                padding: 22px 6%;
-                flex-direction: column;
-                gap: 15px;
+                flex-wrap: wrap;
+                row-gap: 12px;
+                padding: 16px 6% 12px;
             }
 
             nav.scrolled {
-                padding: 14px 6%;
-                gap: 10px;
+                padding: 12px 6% 10px;
             }
 
+            .logo {
+                order: 1;
+                font-size: 19px;
+            }
+
+            /* Let the menu and settings button sit directly in the nav row layout */
             .nav-links {
-                gap: 18px;
-                flex-wrap: wrap;
-                justify-content: center;
+                display: contents;
+            }
+
+            .settings-btn {
+                order: 2;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 10px;
+                border-top: 1px solid var(--nav-border);
+            }
+
+            .nav-links a {
+                font-size: 13px;
             }
 
             .hero {
                 min-height: auto;
-                padding: 150px 6% 80px;
+                padding: 170px 6% 160px;
             }
 
             .hero-text h1 {
@@ -1060,10 +1158,12 @@
         <a href="index.html" class="logo">portraits.bykarl</a>
 
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="products.html" class="active">Products</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html">Contact Us</a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="products.html" class="active">Products</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html">Contact Us</a>
+            </div>
 
             <!-- 3-BAR SETTINGS BUTTON -->
             <button class="settings-btn" id="openDrawerBtn" aria-label="Open Settings">
@@ -1126,12 +1226,14 @@
 
                 <div class="price-image">
                     <img src="small.jpg" alt="Small graphite portrait" loading="lazy">
+                    <span class="example-badge">Example Product</span>
                 </div>
             </div>
 
             <div class="price-row reverse">
                 <div class="price-image">
                     <img src="large.jpg" alt="Large graphite portrait" loading="lazy">
+                    <span class="example-badge">Example Product</span>
                 </div>
 
                 <div class="price-info">
@@ -1156,7 +1258,6 @@
 
         <section class="order-section" id="how-to-order">
             <div class="section-heading">
-                <small>Simple and Personal</small>
                 <h2>How to Order a Portrait</h2>
             </div>
 
@@ -1233,11 +1334,9 @@
 
         <section class="gallery-section" id="portraits">
             <div class="section-heading">
-                <small>Selected Works</small>
                 <h2>Our Portraits</h2>
                 <p>
-                    A collection of hand-drawn graphite artworks, each created
-                    to capture the beauty and character of its subject.
+                    Here are some of the commissions I've done this year
                 </p>
             </div>
 
@@ -1438,24 +1537,24 @@
             }
         }
 
-        // Apply saved theme on page load
+        // Apply saved theme on page load targeting documentElement (<html>)
         const savedTheme = localStorage.getItem("site_theme");
         if (savedTheme === "dark") {
-            document.body.setAttribute("data-theme", "dark");
+            document.documentElement.setAttribute("data-theme", "dark");
             updateThemeButton(true);
         } else {
-            document.body.removeAttribute("data-theme");
+            document.documentElement.removeAttribute("data-theme");
             updateThemeButton(false);
         }
 
         themeToggleBtn.addEventListener("click", () => {
-            const isDark = document.body.getAttribute("data-theme") === "dark";
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
-                document.body.removeAttribute("data-theme");
+                document.documentElement.removeAttribute("data-theme");
                 localStorage.setItem("site_theme", "light");
                 updateThemeButton(false);
             } else {
-                document.body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
                 localStorage.setItem("site_theme", "dark");
                 updateThemeButton(true);
             }
@@ -1464,5 +1563,13 @@
 
     <!-- Accounts + footer comments (site.js must be in the same folder as this page) -->
     <script src="site.js"></script>
+
+    <noscript>
+        <style>
+            .loader { display: none; }
+            body.loading { overflow: auto; }
+        </style>
+    </noscript>
+
 </body>
 </html>
