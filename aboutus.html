@@ -381,7 +381,7 @@
             border-color: var(--btn-hover-bg);
         }
 
-        /* ABOUT */
+        /* ABOUT SECTION */
         .about {
             min-height: 80vh;
             padding: 150px 7% 100px;
@@ -389,14 +389,21 @@
             align-items: center;
             background:
                 var(--hero-overlay),
-                url("portrait-background.jpg");
+                url("bg1.jpg");
             background-size: cover;
             background-position: center;
             transition: background 0.4s ease;
         }
 
+        .about-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: center;
+            gap: 60px;
+        }
+
         .about-content {
-            max-width: 800px;
             color: #efe4d2;
         }
 
@@ -409,7 +416,7 @@
         .about-content h1 {
             margin: 20px 0 25px;
             font-family: Georgia, serif;
-            font-size: clamp(48px, 6vw, 70px);
+            font-size: clamp(42px, 5.5vw, 64px);
             font-weight: normal;
             line-height: 1.05;
         }
@@ -423,6 +430,26 @@
             color: #e3d7c4;
             font-size: 18px;
             line-height: 1.8;
+        }
+
+        .about-image {
+            width: 100%;
+            max-width: 400px;
+            justify-self: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid #6f4e37;
+            overflow: hidden;
+            background: #1c1411;
+            cursor: pointer;
+        }
+
+        .about-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
         }
 
         /* FOOTER */
@@ -483,6 +510,22 @@
         }
 
         /* MOBILE */
+        @media (max-width: 900px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .about-content p {
+                margin: 0 auto;
+            }
+
+            .about-image {
+                max-width: 320px;
+            }
+        }
+
         @media (max-width: 700px) {
             nav {
                 padding: 22px 6%;
@@ -506,7 +549,7 @@
             }
 
             .about-content h1 {
-                font-size: 46px;
+                font-size: 40px;
             }
 
             .about-content p {
@@ -579,19 +622,26 @@
     </aside>
 
     <section class="about">
-        <div class="about-content">
-            <small>Our Story</small>
+        <div class="about-container">
+            <div class="about-content">
+                <small>Our Story</small>
 
-            <h1>
-                About <span>portraits.bykarl</span>
-            </h1>
+                <h1>
+                    About <span>portraits.bykarl</span>
+                </h1>
 
-            <p>
-                portraits.bykarl is a small portrait business by Karl Saniel, a college student in Sacred Heart College
-                who draws graphite portraits with realistic details. The business was made to help people find an
-                affordable gift for their loved ones using timeless artworks that customers
-                can keep and treasure.
-            </p>
+                <p>
+                    portraits.bykarl is a small portrait business created by Karl Saniel, a college student in Sacred Heart College.
+                    The business started with a dream of earning money using the art materials he has on his home. The business was not only made to 
+                    make profit using his talent in art but the business was also made to help people find an
+                    affordable gift for their loved ones that customers
+                    can keep and treasure.
+                </p>
+            </div>
+
+            <div class="about-image">
+                <img id="karlPortrait" src="karls.jpg" alt="Karl Saniel" loading="lazy">
+            </div>
         </div>
     </section>
 
@@ -633,6 +683,22 @@
 
         window.addEventListener("scroll", updateNav, { passive: true });
         updateNav();
+
+        /* HOVER IMAGE SWAP SCRIPT */
+        const karlPortrait = document.getElementById("karlPortrait");
+        if (karlPortrait) {
+            // Preload the hover image to prevent any delay/flicker
+            const hoverImg = new Image();
+            hoverImg.src = "karlss.jpg";
+
+            karlPortrait.addEventListener("mouseenter", () => {
+                karlPortrait.src = "karlss.jpg";
+            });
+
+            karlPortrait.addEventListener("mouseleave", () => {
+                karlPortrait.src = "karls.jpg";
+            });
+        }
 
         /* LOADING SCREEN */
         const loader = document.getElementById("loader");
