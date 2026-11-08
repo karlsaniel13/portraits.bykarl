@@ -9,6 +9,66 @@
     var MAX_COMMENT_LENGTH = 500;
     var MAX_STORED_COMMENTS = 500;
 
+    /* ---------- sample comments shown in the footer (edit text, names, dates, or pictures here) ---------- */
+    var SEED_COMMENTS = [
+        {
+            id: "seed1",
+            seed: true,
+            username: "Jiro Danganan",
+            avatar: "jiro.jpg",
+            text: "Amazing website :), Tara chess",
+            ts: Date.UTC(2026, 10, 5, 9, 30)
+        },
+        {
+            id: "seed2",
+            seed: true,
+            username: "Kian Bathan",
+            avatar: "kian.jpg",
+            text: "kung hindi tayo para sa isa't isa. Pwede paisa?",
+            ts: Date.UTC(2026, 10, 3, 14, 10)
+        },
+        {
+            id: "seed3",
+            seed: true,
+            username: "Jancel Buama",
+            avatar: "jancel.jpg",
+            text: "kulang ng royaL",
+            ts: Date.UTC(2026, 9, 31, 11, 45)
+        },
+        {
+            id: "seed4",
+            seed: true,
+            username: "Karl Saniel",
+            avatar: "karls.jpg",
+            text: "Aanhin mo ang maraming pera kung yung face card ng teacher mo sa UTS bawing bawi na",
+            ts: Date.UTC(2026, 9, 28, 16, 20)
+        },
+        {
+            id: "seed5",
+            seed: true,
+            username: "Reuben Flavier",
+            avatar: "reuben.jpg",
+            text: " Smokey Sarap",
+            ts: Date.UTC(2026, 9, 22, 8, 5)
+        },
+        {
+            id: "seed6",
+            seed: true,
+            username: "Genesis Jimenez",
+            avatar: "genesis.jpg",
+            text: "placeholder.",
+            ts: Date.UTC(2026, 9, 15, 13, 40)
+        },
+        {
+            id: "seed7",
+            seed: true,
+            username: "Francis Angcana",
+            avatar: "francis.jpg",
+            text: "Sipsip Sarap",
+            ts: Date.UTC(2026, 9, 7, 10, 0)
+        }
+    ];
+
     /* ---------- storage helpers ---------- */
     function read(key, fallback) {
         try {
@@ -251,6 +311,24 @@
         return node;
     }
 
+    /* round profile picture: shows the first letter until the image file exists */
+    function avatar(name, src) {
+        var wrap = el("div", "pb-avatar");
+        wrap.appendChild(el("span", "pb-avatar-initial", String(name).charAt(0)));
+
+        if (src) {
+            var img = document.createElement("img");
+            img.alt = "";
+            img.addEventListener("error", function () {
+                if (img.parentNode) img.parentNode.removeChild(img);
+            });
+            img.src = src;
+            wrap.appendChild(img);
+        }
+
+        return wrap;
+    }
+
     /* ---------- styles for the injected UI ---------- */
     var CSS = [
         ".pb-comments{margin-bottom:25px;padding-top:25px;border-top:1px solid #33261e}",
@@ -276,8 +354,12 @@
         ".pb-post{padding:12px 22px;background:#c8a47e;border:none;color:#120d0b;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;transition:background-color .3s}",
         ".pb-post:hover{background:#e3d7c4}",
         ".pb-error{min-height:18px;margin-top:10px;font-size:13px;color:#e59a86}",
-        ".pb-list{list-style:none;display:flex;flex-direction:column;gap:12px;max-height:380px;margin-top:20px;padding-right:4px;overflow-y:auto}",
-        ".pb-item{padding:16px;background:rgba(255,255,255,.03);border:1px solid #33261e;border-left:2px solid #6f4e37}",
+        ".pb-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:20px}",
+        ".pb-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:rgba(255,255,255,.03);border:1px solid #33261e;border-left:2px solid #6f4e37}",
+        ".pb-item-main{flex:1;min-width:0}",
+        ".pb-avatar{position:relative;flex-shrink:0;width:42px;height:42px;border-radius:50%;overflow:hidden;background:#6f4e37;border:2px solid #c8a47e}",
+        ".pb-avatar-initial{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:18px;color:#efe4d2;text-transform:uppercase}",
+        ".pb-avatar img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}",
         ".pb-item-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}",
         ".pb-user{font-family:Georgia,serif;font-size:16px;color:#c8a47e}",
         ".pb-time{margin-left:10px;font-size:11px;color:#8e7b68}",
@@ -325,7 +407,8 @@
         var list = el("ul", "pb-list");
 
         function renderList() {
-            var comments = getComments().slice().sort(function (a, b) {
+            /* visitor comments + the built-in sample comments, newest first */
+            var comments = getComments().concat(SEED_COMMENTS).sort(function (a, b) {
                 return b.ts - a.ts;
             });
 
@@ -341,6 +424,11 @@
 
             comments.forEach(function (c) {
                 var item = el("li", "pb-item");
+
+                /* profile picture before the username */
+                item.appendChild(avatar(c.username, c.avatar));
+
+                var main = el("div", "pb-item-main");
                 var head = el("div", "pb-item-head");
                 var who = el("div");
 
@@ -351,7 +439,7 @@
                 who.appendChild(time);
                 head.appendChild(who);
 
-                if (me && me.username === c.username) {
+                if (!c.seed && me && me.username === c.username) {
                     var del = el("button", "pb-delete", "Delete");
                     del.type = "button";
                     del.addEventListener("click", function () {
@@ -363,8 +451,9 @@
                     head.appendChild(del);
                 }
 
-                item.appendChild(head);
-                item.appendChild(el("div", "pb-text", c.text));
+                main.appendChild(head);
+                main.appendChild(el("div", "pb-text", c.text));
+                item.appendChild(main);
                 list.appendChild(item);
             });
         }
@@ -401,7 +490,6 @@
                 area.value = "";
                 counter.textContent = "0 / " + MAX_COMMENT_LENGTH;
                 renderList();
-                list.scrollTop = 0;
             };
 
             area.addEventListener("input", function () {
