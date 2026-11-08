@@ -32,6 +32,7 @@
             --card-border: #dccbb0;
             --card-hover-bg: #fbf5e9;
             --card-hover-border: #c4ac8a;
+            --card-text: #38271d;
             --footer-bg: #1c1411;
             --footer-text: #efe4d2;
             --footer-subtext: #bfae98;
@@ -59,6 +60,7 @@
             --card-border: #38271d;
             --card-hover-bg: #241914;
             --card-hover-border: #6f4e37;
+            --card-text: #d8c9b2;
             --footer-bg: #090605;
             --footer-text: #e3d7c4;
             --footer-subtext: #8e7b68;
@@ -174,6 +176,12 @@
         }
 
         .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 30px;
@@ -382,14 +390,10 @@
             border-color: var(--btn-hover-bg);
         }
 
-        /* SECTIONS */
-        #home {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 120px 7%;
-            background-color: #1c1411; /* Dark fallback if image fails to load */
-            background-image: 
+        /* SHARED BACKGROUND: one picture behind both the first and second section */
+        .hero-about {
+            background-color: #1c1411;
+            background-image:
                 var(--hero-overlay),
                 url("portrait-background.jpg");
             background-size: cover;
@@ -397,8 +401,19 @@
             background-repeat: no-repeat;
         }
 
+        /* SECTIONS */
+        #home {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            align-items: center;
+            gap: 60px;
+            padding: 120px 7%;
+            background: transparent;
+        }
+
         .hero {
-            max-width: 650px;
+            max-width: none;
             color: #efe4d2;
         }
 
@@ -411,9 +426,10 @@
         .hero h1 {
             margin: 20px 0;
             font-family: Georgia, serif;
-            font-size: clamp(55px, 8vw, 90px);
+            font-size: clamp(32px, 5.5vw, 76px);
             font-weight: normal;
             line-height: 1;
+            white-space: nowrap;
         }
 
         .hero h1 span {
@@ -426,6 +442,118 @@
             color: #e3d7c4;
             font-size: 16px;
             line-height: 1.8;
+        }
+
+        /* HERO VIDEO (RIGHT SIDE) - wrapper holds the frame, link and sound button */
+        .hero-video-wrap {
+            position: relative;
+            justify-self: end;
+            width: min(100%, 640px, calc(80vh * 4 / 5));
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            background: #120c09;
+            border: 2px solid #6f4e37;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
+        }
+
+        /* Clickable link covering the whole video */
+        .hero-video {
+            position: absolute;
+            inset: 0;
+            display: block;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .hero-video video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Hover text: "View TikTok video" */
+        .video-hover-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 25px;
+            background: rgba(28, 20, 17, 0.78);
+            font-family: Georgia, serif;
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #efe4d2;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .hero-video:focus-visible .video-hover-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (hover: hover) {
+            .hero-video-wrap:hover .video-hover-text {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        /* SOUND (MUTE / UNMUTE) BUTTON - bottom left corner of the video */
+        .video-sound-btn {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+            border: 1px solid #6f4e37;
+            background: rgba(18, 12, 9, 0.75);
+            color: #efe4d2;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.1s;
+        }
+
+        .video-sound-btn:hover {
+            background: rgba(18, 12, 9, 0.95);
+            color: #c8a47e;
+            border-color: #c8a47e;
+        }
+
+        .video-sound-btn:active {
+            transform: scale(0.94);
+        }
+
+        .video-sound-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .video-sound-btn svg.icon-sound-on {
+            display: none;
+        }
+
+        .video-sound-btn.is-unmuted svg.icon-sound-on {
+            display: block;
+        }
+
+        .video-sound-btn.is-unmuted svg.icon-sound-off {
+            display: none;
         }
 
         .button {
@@ -444,27 +572,118 @@
             color: var(--btn-hover-text);
         }
 
+        /* ABOUT SECTION (RE-ARRANGED & BALANCED FONT SIZES) */
+        /* No background color: the shared background picture shows through */
         .about {
-            padding: 100px 7%;
+            padding: 90px 7%;
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 80px;
-            background: var(--about-bg);
-            transition: background-color 0.4s ease;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 60px;
+            background: transparent;
         }
 
         .about h2 {
+            grid-column: 1 / -1;
+            text-align: center;
             font-family: Georgia, serif;
-            font-size: 50px;
+            font-size: clamp(28px, 4.2vw, 52px);
             font-weight: normal;
-            line-height: 1.1;
+            line-height: 1.2;
             color: var(--about-title);
+            margin-bottom: 10px;
         }
 
-        .about p {
-            margin-bottom: 20px;
+        .about-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-text p {
+            margin-bottom: 22px;
             color: var(--about-text);
+            font-family: Georgia, serif;
+            font-size: clamp(16px, 1.4vw, 20px);
+            font-weight: normal;
+            line-height: 1.7;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about .portrait-card {
+            width: 100%;
+            max-width: 460px;
+            justify-self: center;
+        }
+
+        .portrait-card {
+            position: relative;
+            overflow: hidden;
+            background: var(--about-bg);
+            height: 520px;
+            cursor: pointer;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .portrait-card img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .portrait-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(28, 20, 17, 0.88);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            border: 2px solid #6f4e37;
+        }
+
+        .portrait-overlay h3 {
+            font-family: Georgia, serif;
+            font-size: 24px;
+            font-weight: normal;
+            color: #efe4d2;
+            margin-bottom: 8px;
+        }
+
+        .about .portrait-overlay p {
+            margin-bottom: 0;
+            font-size: 13px;
+            color: #c8a47e;
+            letter-spacing: 1.5px;
             line-height: 1.8;
+            text-transform: uppercase;
+        }
+
+        @media (hover: hover) {
+            .portrait-card:hover {
+                transform: scale(1.04);
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+                z-index: 5;
+            }
+
+            .portrait-card:hover img {
+                transform: scale(1.06);
+            }
+
+            .portrait-card:hover .portrait-overlay {
+                opacity: 1;
+                visibility: visible;
+            }
         }
 
         .features {
@@ -473,6 +692,12 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             background: var(--features-bg);
+            background-image: 
+                linear-gradient(to bottom, rgba(28, 20, 17, 0.85), rgba(28, 20, 17, 0.45)),
+                url("bg2.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             transition: background-color 0.4s ease;
         }
 
@@ -493,9 +718,10 @@
         }
 
         .card p {
-            color: var(--about-text);
             font-size: 14px;
+            color: var(--card-text);
             line-height: 1.7;
+            transition: color 0.4s ease;
         }
 
         .card:hover {
@@ -559,17 +785,68 @@
             font-size: 11px;
         }
 
+        /* TABLET */
+        @media (max-width: 900px) {
+            #home {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 140px 6% 80px;
+            }
+
+            .hero-video-wrap {
+                justify-self: center;
+                width: min(100%, 560px);
+            }
+
+            .about {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 70px 6%;
+            }
+
+            .about-text {
+                order: 2;
+            }
+
+            .about .portrait-card {
+                order: 1;
+                height: 420px;
+            }
+        }
+
+        /* MOBILE: nav becomes two rows (logo + settings on top, links below) */
         @media (max-width: 700px) {
             nav {
-                padding: 22px 6%;
+                flex-wrap: wrap;
+                row-gap: 12px;
+                padding: 16px 6% 12px;
             }
 
             nav.scrolled {
-                padding: 14px 6%;
+                padding: 12px 6% 10px;
             }
 
+            .logo {
+                order: 1;
+                font-size: 19px;
+            }
+
+            /* Let the menu and settings button sit directly in the nav row layout */
             .nav-links {
-                gap: 14px;
+                display: contents;
+            }
+
+            .settings-btn {
+                order: 2;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 10px;
+                border-top: 1px solid var(--nav-border);
             }
 
             .nav-links a {
@@ -577,21 +854,29 @@
             }
 
             #home {
-                padding: 150px 6% 80px;
+                padding: 170px 6% 70px;
+                min-height: auto;
             }
 
             .hero h1 {
-                font-size: 55px;
+                font-size: 9vw;
             }
 
-            .about {
-                grid-template-columns: 1fr;
-                gap: 35px;
-                padding: 80px 6%;
+            .hero-video-wrap {
+                width: 100%;
             }
 
             .about h2 {
-                font-size: 42px;
+                font-size: 7vw;
+                white-space: normal;
+            }
+
+            .about-text p {
+                font-size: 17px;
+            }
+
+            .portrait-card {
+                height: 400px;
             }
 
             .features {
@@ -623,10 +908,12 @@
         <a href="index.html" class="logo">portraits.bykarl</a>
 
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="products.html">Products</a>
-            <a href="aboutus.html">About Us</a>
-            <a href="contactus.html">Contact Us</a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="contactus.html">Contact Us</a>
+            </div>
 
             <!-- 3-bar settings button -->
             <button class="settings-btn" id="openDrawerBtn" aria-label="Open Settings">
@@ -660,52 +947,83 @@
         </div>
     </aside>
 
-    <section id="home">
-        <div class="hero">
-            <small>Hand-drawn graphite portraits</small>
+    <!-- Shared background wrapper: first + second section -->
+    <div class="hero-about">
 
-            <h1>
-                Art that<br>
-                <span>remembers.</span>
-            </h1>
+        <section id="home">
+            <div class="hero">
+                <small>Hand-drawn graphite portraits</small>
 
-            <p>
-                We create carefully hand-drawn graphite portraits
-                that turn meaningful people and memories into
-                timeless pieces of artwork.
-            </p>
+                <h1>Art made<br>
+                    with love</h1>
 
-            <a href="products.html" class="button">View Our Work</a>
-        </div>
-    </section>
+                <a href="products.html#portraits" class="button">View Our Work</a>
+            </div>
 
-    <section class="about">
-        <div>
-            <h2>
-                Every face<br>
-                tells a story.
-            </h2>
-        </div>
+            <!-- Video on the right side -->
+            <div class="hero-video-wrap">
+                <!-- Link: hover shows "View TikTok video", click opens the TikTok video -->
+                <a class="hero-video"
+                   href="https://www.tiktok.com/@portraitsbykarl/video/7647187201167494407?is_from_webapp=1&sender_device=pc"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="View TikTok video">
+                    <video id="heroVideo" autoplay muted loop playsinline preload="metadata">
+                        <source src="video.mp4" type="video/mp4">
+                    </video>
+                    <span class="video-hover-text">View TikTok video</span>
+                </a>
 
-        <div>
-            <p>
-                At portraits.bykarl, we believe that a portrait
-                is more than an image. It is a way of preserving
-                a person, a feeling, and a moment in time.
-            </p>
+                <!-- Sound button (bottom left corner): click to mute / unmute -->
+                <button type="button" class="video-sound-btn" id="videoSoundBtn" aria-label="Unmute video" aria-pressed="false">
+                    <!-- Muted icon (speaker with X) -->
+                    <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                    <!-- Sound on icon (speaker with waves) -->
+                    <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
+                </button>
+            </div>
+        </section>
 
-            <p>
-                Each portrait is drawn by hand with careful
-                attention to detail, expression, and the unique
-                characteristics of every subject.
-            </p>
+        <section class="about">
+            <h2>Every face tells a story.</h2>
 
-            <p>
-                Our goal is to create meaningful artwork that
-                can be treasured for years to come.
-            </p>
-        </div>
-    </section>
+            <div class="about-text">
+                <p>
+                    At portraits.bykarl, we believe that a portrait
+                    is more than an image. It is a way of preserving
+                    a person, a feeling, and a moment in time.
+                </p>
+                <p>
+                    Each portrait is drawn by hand with careful
+                    attention to detail, expression, and the unique
+                    characteristics of every subject.
+                </p>
+                <p>
+                    Our goal is to create meaningful artwork that
+                    can be treasured for years to come.
+                </p>
+            </div>
+
+            <article class="portrait-card">
+                <img src="framed.jpg" alt="Graphite portrait artwork 2" loading="lazy">
+                <div class="portrait-overlay">
+                    <h3>Small Portrait</h3>
+                    <p>Size: 13 cm x 18 cm</p>
+                    <p>Landscape</p>
+                    <p>Additionals: Background</p>
+                </div>
+            </article>
+        </section>
+
+    </div>
 
     <section class="features">
         <div class="card">
@@ -798,6 +1116,46 @@
         }
 
         setTimeout(hideLoader, 5000);
+
+        /* HERO VIDEO: respect reduced-motion preference (stays paused on the first frame) */
+        const heroVideo = document.getElementById("heroVideo");
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (heroVideo) {
+            if (prefersReducedMotion) {
+                heroVideo.removeAttribute("autoplay");
+                heroVideo.pause();
+            } else {
+                const playPromise = heroVideo.play();
+                if (playPromise && typeof playPromise.catch === "function") {
+                    playPromise.catch(function () {});
+                }
+            }
+        }
+
+        /* VIDEO SOUND BUTTON: click to mute / unmute, icon changes each click */
+        const videoSoundBtn = document.getElementById("videoSoundBtn");
+
+        if (heroVideo && videoSoundBtn) {
+            videoSoundBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+
+                heroVideo.muted = !heroVideo.muted;
+                const isUnmuted = !heroVideo.muted;
+
+                videoSoundBtn.classList.toggle("is-unmuted", isUnmuted);
+                videoSoundBtn.setAttribute("aria-pressed", String(isUnmuted));
+                videoSoundBtn.setAttribute("aria-label", isUnmuted ? "Mute video" : "Unmute video");
+
+                // If the browser paused the video, start it again now that the visitor has interacted
+                if (isUnmuted && heroVideo.paused && !prefersReducedMotion) {
+                    const p = heroVideo.play();
+                    if (p && typeof p.catch === "function") {
+                        p.catch(function () {});
+                    }
+                }
+            });
+        }
 
         /* SETTINGS DRAWER CONTROLS */
         const openDrawerBtn = document.getElementById("openDrawerBtn");
